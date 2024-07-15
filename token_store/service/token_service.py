@@ -1,9 +1,12 @@
 from typing import Annotated
 
 from fastapi import Depends
-from tortoise.transactions import in_transaction
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from .transformers import token_model_to_dto, from_token_dto_to_model
+from ..persistence.database import get_session
 from ..persistence.models import TokenModel, PermissionModel
 from .dto import TokenDTO
 from .validation.facebook_validator import FacebookValidatorDep
@@ -11,17 +14,16 @@ from .validation.facebook_validator import FacebookValidatorDep
 
 class TokenService:
 
-    def __init__(self, validator: FacebookValidatorDep):
+    def __init__(self, session: Annotated[AsyncSession, Depends(get_session)], validator: FacebookValidatorDep):
+        self.session = session
         self.validator = validator
 
-    @staticmethod
-    async def find_all(client_id: str | None) -> list[TokenDTO]:
-        query_model = TokenModel.all()
+    async def find_all(self, client_id: str | None) -> list[TokenDTO]:
+        query = select(TokenModel)
 
         if client_id:
-            query_model = query_model.filter(client_id=client_id)
-
-        tokens = await query_model
+            query = query.where(client_id=client_id)
+        tokens = await self.session.execute(query)
 
         for token in tokens:
             await token.fetch_related("permissions")
@@ -39,12 +41,11 @@ class TokenService:
             PermissionModel(name=permission) for permission in token.permissions
         ]
 
-        async with in_transaction():
-            await token_entity.save()
-            for permission_entity in permission_entities:
-                await permission_entity.save()
-                await token_entity.permissions.add(permission_entity)
-            return token_entity.id
+        self.session.add_all([token_entity, *permission_entities])
+
+        await self.session.commit()
+
+        return token_entity.id
 
 
 TokenServiceDep = Annotated[TokenService, Depends(TokenService)]

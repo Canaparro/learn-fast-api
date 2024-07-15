@@ -1,19 +1,38 @@
-from tortoise import fields
-from tortoise.contrib.pydantic import pydantic_model_creator
-from tortoise.models import Model
+from uuid import UUID, uuid4
+
+from sqlalchemy import Table, ForeignKey, Column
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship, MappedAsDataclass
 
 
-class TokenModel(Model):
-    id = fields.UUIDField(pk=True)
-    client_id = fields.CharField(max_length=255)
-    instance_id = fields.CharField(max_length=255)
-    account_id = fields.CharField(max_length=255)
-    token = fields.TextField()
-    expire_at = fields.IntField()
-    permissions: fields.ManyToManyRelation["PermissionModel"]
+class Base(AsyncAttrs, MappedAsDataclass, DeclarativeBase):
+    pass
 
 
-class PermissionModel(Model):
-    id = fields.UUIDField(pk=True)
-    name = fields.CharField(max_length=255)
-    tokens: fields.ManyToManyRelation[TokenModel] = fields.ManyToManyField("models.TokenModel", related_name="permissions", through="token_permission")
+association_table = Table(
+    "association_table",
+    Base.metadata,
+    Column("token_id", ForeignKey("token.id"), primary_key=True),
+    Column("permission_id", ForeignKey("permission.id"), primary_key=True),
+)
+
+
+class PermissionModel(Base):
+    __tablename__ = "permission"
+
+    name: Mapped[str] = mapped_column(index=True)
+    id: Mapped[str] = mapped_column(primary_key=True, default_factory=uuid4)
+
+
+class TokenModel(Base):
+    __tablename__ = "token"
+
+    instance_id: Mapped[str] = mapped_column(index=True)
+    client_id: Mapped[str] = mapped_column(index=True)
+    account_id: Mapped[str] = mapped_column(index=True)
+    token: Mapped[str]
+    expire_at: Mapped[int]
+    permissions: Mapped[list[PermissionModel]] = relationship(
+        secondary="association_table", default_factory=list
+    )
+    id: Mapped[str] = mapped_column(primary_key=True, default_factory=uuid4)
