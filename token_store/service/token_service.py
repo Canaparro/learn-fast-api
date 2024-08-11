@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from token_store.persistence.database import get_session
+from token_store.persistence.database import database_session_factory
 from token_store.persistence.models import TokenModel
 from token_store.service.dto import TokenDTO
 from token_store.service.transformers import from_token_dto_to_model, token_model_to_dto, from_permission_dto_to_model
@@ -14,7 +14,7 @@ from token_store.service.validation.facebook_validator import FacebookValidatorD
 
 class TokenService:
 
-    def __init__(self, session: Annotated[AsyncSession, Depends(get_session)], validator: FacebookValidatorDep):
+    def __init__(self, session: Annotated[AsyncSession, Depends(database_session_factory)], validator: FacebookValidatorDep):
         self.session = session
         self.validator = validator
 
@@ -45,6 +45,25 @@ class TokenService:
         await self.session.commit()
 
         return entity_id
+
+    async def update_token(self, token_id: str, token: TokenDTO) -> bool:
+        token_entity = await self.session.get(TokenModel, token_id)
+
+        if not token_entity:
+            raise Exception("Token not found")
+
+        self.validator.validate(token)
+
+        token_entity.instance_id = token.instance_id
+        token_entity.client_id = token.client_id
+        token_entity.account_id = token.account_id
+        token_entity.token = token.token
+        token_entity.expire_at = token.expire_at
+        token_entity.permissions = from_permission_dto_to_model(token.permissions, token_entity)
+
+        await self.session.commit()
+
+        return True
 
 
 TokenServiceDep = Annotated[TokenService, Depends(TokenService)]

@@ -26,12 +26,10 @@ async def create_token(token: TokenDTO, token_service: TokenServiceDep) -> UUID:
 
 
 @router.put("/{token_id}")
-async def update_token(token_id: int, token: TokenDTO):
+async def update_token(token_id: UUID, token: TokenDTO, token_service: TokenServiceDep) -> bool:
     if not token_id:
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="whaaat")
-    if token_id == 1:
-        ["a"] + ("b",)
-    return token
+    return await token_service.update_token(token_id, token)
 
 
 @router.get("/a_deprecated_endpoint", deprecated=True)

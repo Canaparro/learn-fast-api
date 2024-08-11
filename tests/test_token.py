@@ -15,6 +15,11 @@ import pytest
 
 @pytest.fixture
 def clear_db(session: Session):
+    """
+    Clear the database
+    :param session:
+    :return:
+    """
     session.execute(delete(TokenPermissionModel))
     session.execute(delete(TokenModel))
     session.commit()
@@ -86,3 +91,27 @@ def test_create_token(client: TestClient):
     })
     assert response.status_code == 201
     assert UUID(response.json(), version=4)
+
+
+def test_update_token(client: TestClient, create_two_tokens, session: Session):
+    token = create_two_tokens[0]
+    response = client.put(f"/platform/facebook/tokens/{token.id}", json={
+        "token": "test_token_updated",
+        "instance_id": "test_instance_id_updated",
+        "client_id": "test_client_id_updated",
+        "account_id": "test_account_id_updated",
+        "expire_at": int(time.time()),
+        "permissions": ["delete"],
+    })
+    assert response.status_code == 200
+    assert response.json() is True
+
+    # Session was created before the update so it's not aware of the changes, so we need to refresh the internal cache
+    session.refresh(token)
+
+    updated_token = session.get(TokenModel, token.id)
+    assert updated_token.token == "test_token_updated"
+    assert updated_token.instance_id == "test_instance_id_updated"
+    assert updated_token.client_id == "test_client_id_updated"
+    assert updated_token.account_id == "test_account_id_updated"
+    assert [permission.name for permission in updated_token.permissions] == ["delete"]
