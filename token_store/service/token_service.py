@@ -3,13 +3,13 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import selectinload
 
-from .transformers import token_model_to_dto, from_token_dto_to_model
-from ..persistence.database import get_session
-from ..persistence.models import TokenModel, PermissionModel
-from .dto import TokenDTO
-from .validation.facebook_validator import FacebookValidatorDep
+from token_store.persistence.database import get_session
+from token_store.persistence.models import TokenModel
+from token_store.service.dto import TokenDTO
+from token_store.service.transformers import from_token_dto_to_model, token_model_to_dto, from_permission_dto_to_model
+from token_store.service.validation.facebook_validator import FacebookValidatorDep
 
 
 class TokenService:
@@ -19,33 +19,32 @@ class TokenService:
         self.validator = validator
 
     async def find_all(self, client_id: str | None) -> list[TokenDTO]:
-        query = select(TokenModel)
+        query = select(TokenModel).options(selectinload(TokenModel.permissions))
 
         if client_id:
             query = query.where(client_id=client_id)
         tokens = await self.session.execute(query)
-
-        for token in tokens:
-            await token.fetch_related("permissions")
+        tokens = tokens.scalars().all()
 
         return [token_model_to_dto(token) for token in tokens]
 
     async def create_token(self, token: TokenDTO) -> TokenDTO:
-        self.validator.validate(token)
-
         token.id = None
+
+        self.validator.validate(token)
 
         token_entity = from_token_dto_to_model(token)
 
-        permission_entities = [
-            PermissionModel(name=permission) for permission in token.permissions
-        ]
+        self.session.add(token_entity)
 
-        self.session.add_all([token_entity, *permission_entities])
+        permissions = from_permission_dto_to_model(token.permissions, token_entity)
+        token_entity.permissions.extend(permissions)
+
+        entity_id = token_entity.id
 
         await self.session.commit()
 
-        return token_entity.id
+        return entity_id
 
 
 TokenServiceDep = Annotated[TokenService, Depends(TokenService)]
