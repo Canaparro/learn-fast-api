@@ -32,7 +32,7 @@ class TokenModel(Base):
         TokenPermissionModel,
         back_populates="token",
         cascade="all, delete-orphan",
-        lazy="joined",
+        lazy="selectin",
     )
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default_factory=uuid.uuid4)
 

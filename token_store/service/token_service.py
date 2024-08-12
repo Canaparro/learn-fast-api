@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from token_store.persistence.database import database_session_factory
 from token_store.persistence.models import TokenModel
@@ -14,17 +13,20 @@ from token_store.service.validation.facebook_validator import FacebookValidatorD
 
 class TokenService:
 
-    def __init__(self, session: Annotated[AsyncSession, Depends(database_session_factory)], validator: FacebookValidatorDep):
+    def __init__(
+            self,
+            session: Annotated[AsyncSession, Depends(database_session_factory)],
+            validator: FacebookValidatorDep
+    ):
         self.session = session
         self.validator = validator
 
     async def find_all(self, client_id: str | None) -> list[TokenDTO]:
-        query = select(TokenModel).options(selectinload(TokenModel.permissions))
+        query = select(TokenModel)
 
         if client_id:
             query = query.where(client_id=client_id)
-        tokens = await self.session.execute(query)
-        tokens = tokens.scalars().all()
+        tokens = await self.session.scalars(query)
 
         return [token_model_to_dto(token) for token in tokens]
 
