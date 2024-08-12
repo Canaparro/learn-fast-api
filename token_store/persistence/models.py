@@ -14,7 +14,7 @@ class TokenPermissionModel(Base):
     __tablename__ = "token_permission"
     __versioned__ = {}
 
-    name: Mapped[PermissionsEnum] = mapped_column(Enum(PermissionsEnum), primary_key=True, name="token_permission_enum")
+    name: Mapped[PermissionsEnum] = mapped_column(primary_key=True)
     token_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("token.id"), primary_key=True)
     token: Mapped["TokenModel"] = relationship(back_populates="permissions")
 

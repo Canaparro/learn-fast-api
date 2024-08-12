@@ -1,71 +1,31 @@
 from typing import Annotated
-
 from fastapi import Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
 
-from token_store.persistence.database import database_session_factory
-from token_store.persistence.models import TokenModel
-from token_store.service.dto import TokenDTO
-from token_store.service.transformers import from_token_dto_to_model, token_model_to_dto, from_permission_dto_to_model
-from token_store.service.validation.facebook_validator import FacebookValidatorDep
+from token_store.repository.token_repository import TokenRepositoryDep
+from token_store.service.dto import Token
+from token_store.service.validation.validators import TokenValidatorDep
 
 
 class TokenService:
-
     def __init__(
             self,
-            session: Annotated[AsyncSession, Depends(database_session_factory)],
-            validator: FacebookValidatorDep
+            repository: TokenRepositoryDep,
+            validator: TokenValidatorDep
     ):
-        self.session = session
+        self.repository = repository
         self.validator = validator
 
-    async def find_all(self, client_id: str | None) -> list[TokenDTO]:
-        query = select(TokenModel)
+    async def find_all(self, client_id: str | None) -> list[Token]:
+        return await self.repository.find_all(client_id)
 
-        if client_id:
-            query = query.where(client_id=client_id)
-        tokens = await self.session.scalars(query)
-
-        return [token_model_to_dto(token) for token in tokens]
-
-    async def create_token(self, token: TokenDTO) -> TokenDTO:
-        token.id = None
-
+    async def create_token(self, token: Token) -> UUID:
         self.validator.validate(token)
+        return await self.repository.create_token(token)
 
-        token_entity = from_token_dto_to_model(token)
-
-        self.session.add(token_entity)
-
-        permissions = from_permission_dto_to_model(token.permissions, token_entity)
-        token_entity.permissions.extend(permissions)
-
-        entity_id = token_entity.id
-
-        await self.session.commit()
-
-        return entity_id
-
-    async def update_token(self, token_id: str, token: TokenDTO) -> bool:
-        token_entity = await self.session.get(TokenModel, token_id)
-
-        if not token_entity:
-            raise Exception("Token not found")
-
+    async def update_token(self, token_id: UUID, token: Token) -> bool:
         self.validator.validate(token)
-
-        token_entity.instance_id = token.instance_id
-        token_entity.client_id = token.client_id
-        token_entity.account_id = token.account_id
-        token_entity.token = token.token
-        token_entity.expire_at = token.expire_at
-        token_entity.permissions = from_permission_dto_to_model(token.permissions, token_entity)
-
-        await self.session.commit()
-
-        return True
+        return await self.repository.update_token(token_id, token)
 
 
 TokenServiceDep = Annotated[TokenService, Depends(TokenService)]

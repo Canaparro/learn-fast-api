@@ -1,4 +1,5 @@
 import time
+from datetime import timedelta, datetime
 from unittest import mock
 from uuid import UUID
 
@@ -7,8 +8,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from token_store.persistence.models import TokenModel, TokenPermissionModel
-from token_store.service.dto import TokenDTO, PermissionsEnum
-from token_store.service.transformers import from_token_dto_to_model, from_permission_dto_to_model
+from token_store.service.dto import Token, PermissionsEnum
+from token_store.repository.transformers import from_token_dto_to_model, from_permission_dto_to_model
 
 import pytest
 
@@ -29,7 +30,7 @@ def clear_db(session: Session):
 def create_two_tokens(session: Session) -> list[TokenModel]:
     tokens = []
     for i in range(1, 3):
-        token = TokenDTO(
+        token = Token(
             token=f"test_token_{i}",
             instance_id=f"test_instance_id_{i}",
             client_id=f"test_client_id_{i}",
@@ -86,7 +87,7 @@ def test_create_token(client: TestClient):
         "instance_id": "test_instance_id",
         "client_id": "test_client_id",
         "account_id": "test_account_id",
-        "expire_at": int(time.time()),
+        "expire_at": int((datetime.now() + timedelta(days=31)).timestamp()),
         "permissions": ["read", "write"],
     })
     assert response.status_code == 201
@@ -95,12 +96,12 @@ def test_create_token(client: TestClient):
 
 def test_update_token(client: TestClient, create_two_tokens, session: Session):
     token = create_two_tokens[0]
-    response = client.put(f"/platform/facebook/tokens/{token.id}", json={
+    response = client.put(f"/platform/twitter/tokens/{token.id}", json={
         "token": "test_token_updated",
         "instance_id": "test_instance_id_updated",
         "client_id": "test_client_id_updated",
         "account_id": "test_account_id_updated",
-        "expire_at": int(time.time()),
+        "expire_at": -1,
         "permissions": ["delete"],
     })
     assert response.status_code == 200

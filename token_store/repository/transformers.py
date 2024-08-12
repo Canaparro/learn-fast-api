@@ -1,8 +1,8 @@
 from token_store.persistence.models import TokenModel, TokenPermissionModel
-from token_store.service.dto import TokenDTO, PermissionsEnum
+from token_store.service.dto import Token, PermissionsEnum
 
 
-def from_token_dto_to_model(token: TokenDTO) -> TokenModel:
+def from_token_dto_to_model(token: Token) -> TokenModel:
     token_entity = TokenModel(
         instance_id=token.instance_id,
         client_id=token.client_id,
@@ -17,7 +17,7 @@ def from_token_dto_to_model(token: TokenDTO) -> TokenModel:
     return token_entity
 
 
-def from_permission_dto_to_model(permissions: list[PermissionsEnum], token_entity):
+def from_permission_dto_to_model(permissions: list[PermissionsEnum], token_entity) -> list[TokenPermissionModel]:
     permissions = [
         TokenPermissionModel(name=permission, token=token_entity, token_id=token_entity.id)
         for permission in permissions
@@ -25,8 +25,8 @@ def from_permission_dto_to_model(permissions: list[PermissionsEnum], token_entit
     return permissions
 
 
-def token_model_to_dto(token: TokenModel) -> TokenDTO:
-    tokens = TokenDTO(
+def token_model_to_dto(token: TokenModel) -> Token:
+    tokens = Token(
         id=token.id,
         instance_id=token.instance_id,
         client_id=token.client_id,
