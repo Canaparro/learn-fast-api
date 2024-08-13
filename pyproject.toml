@@ -14,7 +14,18 @@ sqlalchemy = "^2.0.31"
 psycopg = {extras = ["binary"], version = "^3.2.1"}
 sqlalchemy-continuum = "^1.4.2"
 testcontainers = {extras = ["postgres"], version = "^4.7.2"}
+mypy = "^1.11.1"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
+autoflake = "^2.3.1"
+pylint = "^3.2.6"
+black = "^24.8.0"
 
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
 
 [build-system]
 requires = ["poetry-core"]

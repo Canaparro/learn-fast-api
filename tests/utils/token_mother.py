@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from token_store.service.dto import Token
+from src.service.dto import Token
 
 
 def get_facebook_valid_token():
@@ -10,7 +10,7 @@ def get_facebook_valid_token():
         client_id="test_client_id",
         account_id="test_account_id",
         expire_at=int((datetime.now() + timedelta(days=31)).timestamp()),
-        permissions=["read", "write"],
+        permissions=["READ", "WRITE"],
     )
 
 
@@ -21,7 +21,7 @@ def get_facebook_invalid_token():
         client_id="test_client_id",
         account_id="test_account_id",
         expire_at=int(datetime.now().timestamp()),
-        permissions=["read", "write"],
+        permissions=["READ", "WRITE"],
     )
 
 
@@ -32,7 +32,7 @@ def get_valid_twitter_token():
         client_id="test_client_id",
         account_id="test_account_id",
         expire_at=-1,
-        permissions=["read", "write"],
+        permissions=["READ", "WRITE"],
     )
 
 
@@ -43,5 +43,5 @@ def get_invalid_twitter_token():
         client_id="test_client_id",
         account_id="test_account_id",
         expire_at=int(datetime.now().timestamp()),
-        permissions=["read", "write"],
+        permissions=["READ", "WRITE"],
     )

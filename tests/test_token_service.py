@@ -2,9 +2,13 @@ import uuid
 
 import pytest
 
+from src.service.token_service import TokenService
+from src.service.validation.validators import (
+    FacebookValidator,
+    TokenValidationError,
+    TwitterValidator,
+)
 from tests.utils import token_mother
-from token_store.service.token_service import TokenService
-from token_store.service.validation.validators import FacebookValidator, TwitterValidator, TokenValidationError
 
 
 class FakeTokenRepository:
@@ -34,7 +38,7 @@ async def test_facebook_token_is_invalid():
     with pytest.raises(TokenValidationError) as e:
         await token_service.create_token(token)
 
-    assert str(e.value) == 'Token expiration must be at least a month in the future'
+    assert str(e.value) == "Token expiration must be at least a month in the future"
 
 
 async def test_twitter_token_is_valid():
@@ -53,4 +57,4 @@ async def test_twitter_token_is_invalid():
     with pytest.raises(TokenValidationError) as e:
         await token_service.create_token(token)
 
-    assert str(e.value) == 'Twitter tokens must have an expiration date of -1'
+    assert str(e.value) == "Twitter tokens must have an expiration date of -1"

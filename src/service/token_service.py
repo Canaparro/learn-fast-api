@@ -1,18 +1,15 @@
 from typing import Annotated
-from fastapi import Depends
 from uuid import UUID
 
-from token_store.repository.token_repository import TokenRepositoryDep
-from token_store.service.dto import Token
-from token_store.service.validation.validators import TokenValidatorDep
+from fastapi import Depends
+
+from src.repository.token_repository import TokenRepositoryDep
+from src.service.dto import Token
+from src.service.validation.validators import TokenValidatorDep
 
 
 class TokenService:
-    def __init__(
-            self,
-            repository: TokenRepositoryDep,
-            validator: TokenValidatorDep
-    ):
+    def __init__(self, repository: TokenRepositoryDep, validator: TokenValidatorDep):
         self.repository = repository
         self.validator = validator
 
