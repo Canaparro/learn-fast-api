@@ -49,7 +49,7 @@ class DatabaseManager:
         return async_sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
 
-async def database_session_factory() -> AsyncGenerator[AsyncSession]:
+async def database_session_factory() -> AsyncGenerator[AsyncSession, None]:
     async_sessionmaker_instance = DatabaseManager().get_session_factory()
     session = async_sessionmaker_instance()
     yield session
