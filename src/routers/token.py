@@ -41,4 +41,4 @@ async def update_token(
 
 @router.get("/a_deprecated_endpoint", deprecated=True)
 async def get_all_tokens_deprecated() -> list[Token]:
-    return [Token()]
+    return []

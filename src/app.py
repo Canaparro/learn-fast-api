@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from typing import AsyncIterator
 
 import uvicorn
 from fastapi import FastAPI
@@ -11,7 +12,7 @@ from src.web import exception_handlers
 
 
 @asynccontextmanager
-async def lifespan(running_app: FastAPI):
+async def lifespan(running_app: FastAPI) -> AsyncIterator[None]:
     try:
         await DatabaseManager().create_database()
     except ConnectionRefusedError as e:

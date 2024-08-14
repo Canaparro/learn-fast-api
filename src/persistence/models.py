@@ -12,7 +12,7 @@ make_versioned(user_cls=None)
 
 class TokenPermissionModel(Base):
     __tablename__ = "token_permission"
-    __versioned__ = {}
+    __versioned__: dict[str, str] = {}
 
     name: Mapped[PermissionsEnum] = mapped_column(primary_key=True)
     token_id: Mapped[uuid.UUID] = mapped_column(
@@ -22,8 +22,8 @@ class TokenPermissionModel(Base):
 
 
 class TokenModel(Base):
-    __versioned__ = {}
     __tablename__ = "token"
+    __versioned__: dict[str, str] = {}
 
     instance_id: Mapped[str] = mapped_column(index=True)
     client_id: Mapped[str] = mapped_column(index=True)

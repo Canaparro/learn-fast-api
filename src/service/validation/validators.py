@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Annotated, Protocol
+from typing import Annotated, Protocol, Type
 
 from fastapi import Depends
 
@@ -13,13 +13,13 @@ class TokenValidationError(Exception):
 class ValidatorProtocol(Protocol):
 
     @staticmethod
-    def validate(token: Token): ...
+    def validate(token: Token) -> None: ...
 
 
 class FacebookValidator:
 
     @staticmethod
-    def validate(token: Token):
+    def validate(token: Token) -> None:
         one_month_future_timestamp = int(
             (datetime.now() + timedelta(days=30)).timestamp()
         )
@@ -32,7 +32,7 @@ class FacebookValidator:
 class TwitterValidator:
 
     @staticmethod
-    def validate(token: Token):
+    def validate(token: Token) -> None:
         if token.expire_at != -1:
             raise TokenValidationError(
                 "Twitter tokens must have an expiration date of -1"
@@ -40,7 +40,7 @@ class TwitterValidator:
 
 
 def validator_factory(social_network: str) -> ValidatorProtocol:
-    validator_map = {
+    validator_map: dict[str, Type[ValidatorProtocol]] = {
         "facebook": FacebookValidator,
         "twitter": TwitterValidator,
     }

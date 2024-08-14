@@ -1,8 +1,10 @@
 import os
+from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
     AsyncAttrs,
     AsyncEngine,
+    AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
@@ -13,7 +15,7 @@ class Base(AsyncAttrs, MappedAsDataclass, DeclarativeBase):
     pass
 
 
-def get_database_env_values():
+def get_database_env_values() -> tuple[str, str, str, str, str]:
     host = os.getenv("POSTGRES_HOST", "localhost")
     port = os.getenv("POSTGRES_PORT", "5432")
     username = os.getenv("POSTGRES_USERNAME", "postgres")
@@ -29,29 +31,26 @@ class DatabaseManager:
 
     _engine: AsyncEngine | None = None
 
-    @classmethod
-    def _initialize(cls):
-        if cls._engine is None:
+    @property
+    def engine(self) -> AsyncEngine:
+        if self.__class__._engine is None:
             database, host, password, port, username = get_database_env_values()
-            cls._engine = create_async_engine(
+            self.__class__._engine = create_async_engine(
                 f"postgresql+asyncpg://{username}:{password}@{host}:{port}/{database}"
             )
+        return self.__class__._engine
 
-    @classmethod
-    async def create_database(cls):
-        cls._initialize()
-        async with cls._engine.begin() as conn:
+    async def create_database(self) -> None:
+        async with self.engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
-    @classmethod
-    def get_session_factory(cls):
-        cls._initialize()
-        return async_sessionmaker(autocommit=False, autoflush=False, bind=cls._engine)
+    def get_session_factory(self) -> async_sessionmaker[AsyncSession]:
+        return async_sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
 
 
-async def database_session_factory():
-    async_sessionmaker_instance = DatabaseManager.get_session_factory()
+async def database_session_factory() -> AsyncGenerator[AsyncSession]:
+    async_sessionmaker_instance = DatabaseManager().get_session_factory()
     session = async_sessionmaker_instance()
     yield session
     await session.close()

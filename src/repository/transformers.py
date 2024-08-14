@@ -18,7 +18,7 @@ def from_token_dto_to_model(token: Token) -> TokenModel:
 
 
 def from_permission_dto_to_model(
-    permissions: list[PermissionsEnum], token_entity
+    permissions: list[PermissionsEnum], token_entity: TokenModel
 ) -> list[TokenPermissionModel]:
     permission_models = [
         TokenPermissionModel(
