@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from src.service.dto import Token
+from token_store.service.dto import Token
 
 
 def get_facebook_valid_token():
