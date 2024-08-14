@@ -2,13 +2,9 @@ import uuid
 
 import pytest
 
-from src.service.token_service import TokenService
-from src.service.validation.validators import (
-    FacebookValidator,
-    TokenValidationError,
-    TwitterValidator,
-)
 from tests.utils import token_mother
+from token_store.service.token_service import TokenService
+from token_store.service.validation.validators import FacebookValidator, TokenValidationError, TwitterValidator
 
 
 class FakeTokenRepository:
