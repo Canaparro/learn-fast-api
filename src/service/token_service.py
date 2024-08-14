@@ -24,5 +24,8 @@ class TokenService:
         self.validator.validate(token)
         return await self.repository.update_token(token_id, token)
 
+    def calculate(self, a: int, b: int) -> int:
+        return a + b
+
 
 TokenServiceDep = Annotated[TokenService, Depends(TokenService)]
