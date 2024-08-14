@@ -4,8 +4,8 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, configure_mappers, mapped_column, relationship
 from sqlalchemy_continuum import make_versioned
 
-from src.persistence.database import Base
-from src.service.dto import PermissionsEnum
+from token_store.persistence.database import Base
+from token_store.service.dto import PermissionsEnum
 
 make_versioned(user_cls=None)
 

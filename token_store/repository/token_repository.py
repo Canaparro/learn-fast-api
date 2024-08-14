@@ -5,15 +5,15 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.persistence.database import database_session_factory
-from src.persistence.models import TokenModel
-from src.repository.protocol import TokenRepositoryProtocol
-from src.repository.transformers import (
+from token_store.persistence.database import database_session_factory
+from token_store.persistence.models import TokenModel
+from token_store.repository.protocol import TokenRepositoryProtocol
+from token_store.repository.transformers import (
     from_permission_dto_to_model,
     from_token_dto_to_model,
     token_model_to_dto,
 )
-from src.service.dto import Token
+from token_store.service.dto import Token
 
 
 class TokenRepository:

@@ -1,5 +1,5 @@
-from src.persistence.models import TokenModel, TokenPermissionModel
-from src.service.dto import PermissionsEnum, Token
+from token_store.persistence.models import TokenModel, TokenPermissionModel
+from token_store.service.dto import PermissionsEnum, Token
 
 
 def from_token_dto_to_model(token: Token) -> TokenModel:
