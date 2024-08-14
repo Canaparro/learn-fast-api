@@ -26,7 +26,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          poetry run pytest --cov=. --cov-report=xml tests/
+          poetry run pytest --cov=. --cov-report=xml --junitxml=xunit-result.xml tests/
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
