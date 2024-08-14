@@ -3,7 +3,7 @@ from typing import Annotated, Protocol, Type
 
 from fastapi import Depends
 
-from src.service.dto import Token
+from token_store.service.dto import Token
 
 
 class TokenValidationError(Exception):

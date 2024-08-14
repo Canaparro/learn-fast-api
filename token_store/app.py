@@ -5,10 +5,10 @@ from typing import AsyncIterator
 import uvicorn
 from fastapi import FastAPI
 
-from src.persistence.database import DatabaseManager
-from src.routers import token
-from src.service.validation.validators import TokenValidationError
-from src.web import exception_handlers
+from token_store.persistence.database import DatabaseManager
+from token_store.routers import token
+from token_store.service.validation.validators import TokenValidationError
+from token_store.web import exception_handlers
 
 
 @asynccontextmanager

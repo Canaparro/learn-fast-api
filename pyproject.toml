@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "token-store"
+name = "token_store"
 version = "0.1.0"
 description = ""
 authors = ["canaparro <marcelo.canaparro@pagefreezer.com>"]
@@ -21,6 +21,7 @@ autoflake = "^2.3.1"
 pylint = "^3.2.6"
 black = "^24.8.0"
 pytest-cov = "^5.0.0"
+asyncpg = "^0.29.0"
 
 [tool.isort]
 profile = "black"

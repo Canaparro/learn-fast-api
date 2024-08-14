@@ -1,7 +1,7 @@
 from typing import List, Protocol
 from uuid import UUID
 
-from src.service.dto import Token
+from token_store.service.dto import Token
 
 
 class TokenRepositoryProtocol(Protocol):
