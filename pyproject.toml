@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "token-store"
+name = "token_store"
 version = "0.1.0"
 description = ""
 authors = ["canaparro <marcelo.canaparro@pagefreezer.com>"]
