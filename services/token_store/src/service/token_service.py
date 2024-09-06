@@ -3,9 +3,9 @@ from uuid import UUID
 
 from fastapi import Depends
 
-from token_store.repository.token_repository import TokenRepositoryDep
-from token_store.service.dto import Token
-from token_store.service.validation.validators import TokenValidatorDep
+from ...src.repository.token_repository import TokenRepositoryDep
+from ...src.service.dto import Token
+from ...src.service.validation.validators import TokenValidatorDep
 
 
 class TokenService:

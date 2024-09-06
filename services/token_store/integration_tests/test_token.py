@@ -8,12 +8,12 @@ from fastapi.testclient import TestClient
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from token_store.persistence.models import TokenModel, TokenPermissionModel
-from token_store.repository.transformers import (
+from ..src.persistence.models import TokenModel, TokenPermissionModel
+from ..src.repository.transformers import (
     from_permission_dto_to_model,
     from_token_dto_to_model,
 )
-from token_store.service.dto import PermissionsEnum, Token
+from ..src.service.dto import PermissionsEnum, Token
 
 
 @pytest.fixture

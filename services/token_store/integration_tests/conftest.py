@@ -6,9 +6,9 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session
 from testcontainers.postgres import PostgresContainer
 
-from token_store.app import app
-from token_store.persistence.database import get_database_env_values
-from token_store.persistence.models import Base
+from ..src.app import app
+from ..src.persistence.database import get_database_env_values
+from ..src.persistence.models import Base
 
 
 @pytest.fixture(scope="session", autouse=True)

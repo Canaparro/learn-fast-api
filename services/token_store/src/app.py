@@ -5,10 +5,10 @@ from typing import AsyncIterator
 import uvicorn
 from fastapi import FastAPI
 
-from token_store.persistence.database import DatabaseManager
-from token_store.routers import token
-from token_store.service.validation.validators import TokenValidationError
-from token_store.web import exception_handlers
+from services.token_store.src.persistence.database import DatabaseManager
+from services.token_store.src.routers import token
+from services.token_store.src.service.validation.validators import TokenValidationError
+from services.token_store.src.web import exception_handlers
 
 
 @asynccontextmanager
@@ -30,4 +30,4 @@ app.include_router(token.router)
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("services.token_store.src.app:app", host="0.0.0.0", port=8000, reload=True)

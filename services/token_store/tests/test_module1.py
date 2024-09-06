@@ -1,4 +1,4 @@
-from token_store.service.module1 import add
+from ..src.service.module1 import add
 
 
 def test_add():
