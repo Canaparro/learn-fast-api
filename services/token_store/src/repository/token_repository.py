@@ -5,7 +5,7 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..persistence.database import database_session_factory
+from common.persistence.database import database_session_factory
 from ...src.persistence.models import TokenModel
 from ...src.repository.protocol import TokenRepositoryProtocol
 from ...src.repository.transformers import (
