@@ -1,5 +1,6 @@
 import uuid
 
+import emoji
 import pytest
 
 from .utils import token_mother
@@ -34,7 +35,7 @@ async def test_facebook_token_is_invalid():
     with pytest.raises(TokenValidationError) as e:
         await token_service.create_token(token)
 
-    assert str(e.value) == "Token expiration must be at least a month in the future"
+    assert str(e.value) == emoji.emojize(":warning: Token expiration must be at least a month in the future :warning:")
 
 
 async def test_twitter_token_is_valid():

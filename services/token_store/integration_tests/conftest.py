@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from testcontainers.postgres import PostgresContainer
 
 from ..src.app import app
-from ..src.persistence.database import get_database_env_values
+from common.persistence.database import get_database_env_values
 from ..src.persistence.models import Base
 
 

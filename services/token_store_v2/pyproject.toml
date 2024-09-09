@@ -25,6 +25,7 @@ pylint = "^3.2.6"
 black = "^24.8.0"
 pytest-cov = "^5.0.0"
 asyncpg = "^0.29.0"
+emojis = "^0.7.0"
 
 [tool.isort]
 profile = "black"

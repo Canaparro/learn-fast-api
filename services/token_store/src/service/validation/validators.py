@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Annotated, Protocol, Type
 
+import emoji
 from fastapi import Depends
 
 from services.token_store.src.service.dto import Token
@@ -25,8 +26,8 @@ class FacebookValidator:
         )
         if token.expire_at < one_month_future_timestamp:
             raise TokenValidationError(
-                "Token expiration must be at least a month in the future"
-            )
+                emoji.emojize(":warning: Token expiration must be at least a month in the future :warning:"
+            ))
 
 
 class TwitterValidator:
