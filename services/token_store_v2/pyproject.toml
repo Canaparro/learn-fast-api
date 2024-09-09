@@ -10,22 +10,9 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.111.0"
-pytest = "^8.2.2"
-pytest-asyncio = "^0.23.7"
-sqlalchemy = "^2.0.31"
-psycopg = {extras = ["binary"], version = "^3.2.1"}
-sqlalchemy-continuum = "^1.4.2"
-testcontainers = {extras = ["postgres"], version = "^4.7.2"}
-mypy = "^1.11.1"
-flake8 = "^7.1.1"
-isort = "^5.13.2"
-autoflake = "^2.3.1"
-pylint = "^3.2.6"
-black = "^24.8.0"
-pytest-cov = "^5.0.0"
-asyncpg = "^0.29.0"
 emojis = "^0.7.0"
+sqlalchemy = "^2.0.31"
+sqlalchemy-continuum = "^1.4.2"
 
 [tool.isort]
 profile = "black"

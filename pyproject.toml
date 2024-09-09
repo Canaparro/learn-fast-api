@@ -1,14 +1,16 @@
 [tool.poetry]
-name = "persistence"
+name = "shared"
 version = "0.1.0"
 description = ""
 authors = ["canaparro <marcelo.canaparro@pagefreezer.com>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-sqlalchemy = "^2.0.31"
+fastapi = "^0.111.0"
+pytest = "^8.2.2"
+pytest-asyncio = "^0.23.7"
 psycopg = {extras = ["binary"], version = "^3.2.1"}
-sqlalchemy-continuum = "^1.4.2"
 testcontainers = {extras = ["postgres"], version = "^4.7.2"}
 mypy = "^1.11.1"
 flake8 = "^7.1.1"

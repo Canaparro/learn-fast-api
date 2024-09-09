@@ -14,3 +14,8 @@ root_patterns = [
 
 [python]
 interpreter_constraints = ["==3.12.*"]
+enable_resolves = true
+
+[python.resolves]
+token_store = "3rdparty/python/token_store.lock"
+token_store_v2 = "3rdparty/python/token_store_v2.lock"

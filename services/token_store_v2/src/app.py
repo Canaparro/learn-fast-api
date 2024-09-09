@@ -5,7 +5,7 @@ from typing import AsyncIterator
 import uvicorn
 from fastapi import FastAPI
 
-from common.persistence.database import DatabaseManager
+from .persistence.database import DatabaseManager
 from services.token_store_v2.src.routers import token
 from services.token_store_v2.src.service.validation.validators import TokenValidationError
 from services.token_store_v2.src.web import exception_handlers
