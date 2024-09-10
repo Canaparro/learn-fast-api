@@ -23,7 +23,6 @@ max-line-length = 88
 [tool.coverage.run]
 relative_files = true
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

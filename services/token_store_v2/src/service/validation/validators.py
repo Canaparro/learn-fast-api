@@ -26,7 +26,7 @@ class FacebookValidator:
         )
         if token.expire_at < one_month_future_timestamp:
             raise TokenValidationError(
-                emojis.encode(":warning: Token expiration must be at least two months in the future :warning:"
+                emojis.encode(":warning: Token expiration must be at least two a months in the future :warning:"
             ))
 
 
