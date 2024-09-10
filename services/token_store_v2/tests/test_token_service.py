@@ -35,7 +35,7 @@ async def test_facebook_token_is_invalid():
     with pytest.raises(TokenValidationError) as e:
         await token_service.create_token(token)
 
-    assert str(e.value) == emojis.encode(":warning: Token expiration must be at least two months in the future :warning:")
+    assert str(e.value) == emojis.encode(":banana: Token expiration must be at least two months in the future :banana:")
 
 
 async def test_twitter_token_is_valid():
