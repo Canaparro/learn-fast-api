@@ -16,6 +16,8 @@ jobs:
         python-version: [3.12]
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: using-pants
     - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
@@ -23,10 +25,10 @@ jobs:
       # This action bootstraps pants and manages 2-3 GHA caches.
       # See: github.com/pantsbuild/actions/tree/main/init-pants/
       with:
-        base-branch: master
+        base-branch: using-pants
         # v0 makes it easy to bust the cache if needed
         # just increase the integer to start with a fresh cache
-        gha-cache-key: v0
+        gha-cache-key: v0-${{ hashFiles('**/*.py', '3rdparty/python/token_store.lock', '3rdparty/python/token_store_v2.lock') }}
         # The Python backend uses named_caches for Pip/PEX state,
         # so it is appropriate to invalidate on lockfile changes.
         named-caches-hash: ${{ hashFiles('3rdparty/python/token_store.lock', '3rdparty/python/token_store_v2.lock') }}
@@ -40,15 +42,15 @@ jobs:
         # but will cause the cache entry to grow without bound over time.
         # See https://www.pantsbuild.org/2.21/docs/using-pants/using-pants-in-ci for tips on how to periodically clean it up.
         # Alternatively you change gha-cache-key to ignore old caches.
-    - name: Check BUILD files
+    - name: Check BUILD files lint and typecheck
       run: |
-        pants tailor --check update-build-files --check ::
+        pants --changed-since=origin/using-pants tailor --check update-build-files --check lint
     - name: Lint and typecheck
       run: |
         pants lint check ::
     - name: Test
       run: |
-        pants test ::
+        pants --changed-since=origin/using-pants --changed-dependents=transitive check test
     - name: Package
       run: |
         # We also smoke test that our release process will work by running `package`.
