@@ -120,6 +120,7 @@ def test_update_token(client: TestClient, create_two_tokens, session: Session):
     session.refresh(token)
 
     updated_token = session.get(TokenModel, token.id)
+    assert updated_token
     assert updated_token.token == "test_token_updated"
     assert updated_token.instance_id == "test_instance_id_updated"
     assert updated_token.client_id == "test_client_id_updated"

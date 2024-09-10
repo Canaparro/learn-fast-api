@@ -14,15 +14,6 @@ emojis = "^0.7.0"
 sqlalchemy = "^2.0.31"
 sqlalchemy-continuum = "^1.4.2"
 
-[tool.isort]
-profile = "black"
-
-[tool.flake8]
-max-line-length = 88
-
-[tool.coverage.run]
-relative_files = true
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
