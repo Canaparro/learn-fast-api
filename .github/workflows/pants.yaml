@@ -1,8 +1,3 @@
-# Copyright 2020 Pants project contributors.
-# Licensed under the Apache License, Version 2.0 (see LICENSE).
-
-# See https://www.pantsbuild.org/2.21/docs/using-pants/using-pants-in-ci for tips on how to set up your CI with Pants.
-
 name: Pants
 
 on: [pull_request]
@@ -16,39 +11,24 @@ jobs:
         python-version: [3.12]
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: using-pants
+    - name: Fetch base branch
+      run: git fetch origin using-pants --unshallow
     - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - uses: pantsbuild/actions/init-pants@v8
-      # This action bootstraps pants and manages 2-3 GHA caches.
-      # See: github.com/pantsbuild/actions/tree/main/init-pants/
       with:
         base-branch: using-pants
-        # v0 makes it easy to bust the cache if needed
-        # just increase the integer to start with a fresh cache
         gha-cache-key: v0
-        # The Python backend uses named_caches for Pip/PEX state,
-        # so it is appropriate to invalidate on lockfile changes.
         named-caches-hash: ${{ hashFiles('token_store.lock', 'token_store_v2.lock') }}
-        # If you're not using a fine-grained remote caching service (see https://www.pantsbuild.org/docs/remote-caching),
-        # then you may also want to preserve the local Pants cache (lmdb_store). However this must invalidate for
-        # changes to any file that can affect the build, so may not be practical in larger repos.
-        # A remote cache service integrates with Pants's fine-grained invalidation and avoids these problems.
-        cache-lmdb-store: 'true'  # defaults to 'false'
-        # Note that named_caches and lmdb_store falls back to partial restore keys which
-        # may give a useful partial result that will save time over completely clean state,
-        # but will cause the cache entry to grow without bound over time.
-        # See https://www.pantsbuild.org/2.21/docs/using-pants/using-pants-in-ci for tips on how to periodically clean it up.
-        # Alternatively you change gha-cache-key to ignore old caches.
-    - name: Check BUILD files lint and typecheck
+        cache-lmdb-store: 'true'
+    - name: Check BUILD files and lint
       run: |
         pants --changed-since=origin/using-pants tailor --check update-build-files --check lint
-    - name: Test
+    - name: Typecheck and test changed
       run: |
         pants --changed-since=origin/using-pants --changed-dependents=transitive check test
-    - name: Package
+    - name: Package changed
       run: |
         pants --changed-since=origin/using-pants --changed-dependents=transitive package
     - name: Upload pants log
