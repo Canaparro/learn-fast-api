@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "token_store"
+version = "0.1.0"
+description = ""
+authors = ["canaparro <marcelo.canaparro@pagefreezer.com>"]
+readme = "README.md"
+packages = [
+    { include = "src" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+emoji = "^2.12.1"
+sqlalchemy = "^2.0.21"
+sqlalchemy-continuum = "^1.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
